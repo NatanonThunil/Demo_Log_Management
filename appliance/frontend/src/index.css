@@ -1,0 +1,109 @@
+/* index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 🎨 Custom theme colors */
+:root {
+  --primary-color: #4f46e5; /* Indigo-600 */
+  --secondary-color: #f59e0b; /* Amber-500 */
+  --bg-color: #f3f4f6; /* Gray-100 */
+  --text-color: #111827; /* Gray-900 */
+  --card-bg: #ffffff;
+  --border-color: #e5e7eb; /* Gray-200 */
+}
+
+/* 🌍 Global body styling */
+body {
+  @apply bg-gray-100 text-gray-900 font-sans antialiased;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+/* 🧭 Header / Navbar */
+header {
+  @apply bg-white shadow p-4 flex justify-between items-center sticky top-0 z-50;
+}
+
+header h1 {
+  @apply text-2xl font-bold text-indigo-600;
+}
+
+/* 📂 Sidebar */
+.sidebar {
+  @apply bg-white w-64 h-screen shadow-md p-4 flex flex-col space-y-2 fixed top-0 left-0;
+}
+
+.sidebar a {
+  @apply text-gray-700 hover:text-indigo-600 hover:bg-gray-100 p-2 rounded-md transition-colors;
+}
+
+/* 📊 Dashboard cards */
+.card {
+  @apply bg-white shadow rounded-lg p-4 border border-gray-200;
+}
+
+.card h2 {
+  @apply text-lg font-semibold text-gray-800;
+}
+
+.card p {
+  @apply text-gray-600 mt-2;
+}
+
+/* 📋 Table styling */
+.table-container {
+  @apply overflow-x-auto mt-4;
+}
+
+table {
+  @apply w-full border-collapse text-sm;
+}
+
+th,
+td {
+  @apply border border-gray-200 px-4 py-2 text-left;
+}
+
+th {
+  @apply bg-indigo-50 text-indigo-700 font-semibold;
+}
+
+tr:nth-child(even) {
+  @apply bg-gray-50;
+}
+
+/* 🔘 Buttons */
+.btn {
+  @apply px-4 py-2 rounded-md font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors;
+}
+
+.btn-secondary {
+  @apply px-4 py-2 rounded-md font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 transition-colors;
+}
+
+/* 🔔 Alerts / Notifications */
+.alert {
+  @apply p-4 rounded-md text-white font-medium shadow;
+}
+
+.alert-info {
+  @apply bg-blue-500;
+}
+
+.alert-success {
+  @apply bg-green-500;
+}
+
+.alert-warning {
+  @apply bg-yellow-500 text-gray-900;
+}
+
+.alert-error {
+  @apply bg-red-500;
+}
+
+/* 🦶 Footer */
+footer {
+  @apply bg-white shadow p-4 text-center text-gray-500 mt-6;
+}

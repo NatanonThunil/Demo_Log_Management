@@ -1,0 +1,12 @@
+import React from "react";
+
+export default function Header({ logout }) {
+  return (
+    <header className="bg-white shadow p-4 flex justify-between items-center">
+      <h1 className="text-2xl font-bold text-indigo-600">Log Management Dashboard</h1>
+      <button onClick={logout} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+        Logout
+      </button>
+    </header>
+  );
+}

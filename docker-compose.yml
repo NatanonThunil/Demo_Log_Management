@@ -1,0 +1,53 @@
+version: '3.8'
+services:
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: logsdb
+      MYSQL_USER: logs
+      MYSQL_PASSWORD: logspass
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  collector:
+    build: ./appliance/collector
+    environment:
+      - BACKEND_URL=http://localhost:4000
+    ports:
+      - "514:514/udp"
+      - "8081:8081"
+    depends_on:
+      - backend
+
+  backend:
+    build: ./appliance/backend
+    environment:
+      - DB_HOST=mysql
+      - DB_USER=logs
+      - DB_PASS=logspass
+      - DB_NAME=logsdb
+      - JWT_SECRET=super_secret_jwt
+    ports:
+      - "4000:4000"
+    depends_on:
+      - mysql
+
+  frontend:
+    build: ./appliance/frontend
+    environment:
+      - VITE_API_URL=http://localhost:4000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+
+volumes:
+  mysql-data:
