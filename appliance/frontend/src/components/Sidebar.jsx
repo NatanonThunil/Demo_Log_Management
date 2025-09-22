@@ -20,7 +20,7 @@ export default function Sidebar({ role }) {
             isExpanded ? "w-20 h-20" : "w-10 h-10"
           }`}
         />
-        {isExpanded && <span className="text-gray-700 font-semibold">John Doe</span>}
+        {isExpanded && <span className="text-gray-700 font-semibold">Ema Lee</span>}
       </div>
 
       {/* Layout toggle button */}

@@ -1,3 +1,146 @@
-username: alice
+ชื่อโปรเจกต์: Multi-Tenant Log Management & Alert System
 
-password: password123
+ระบบนี้เป็น แพลตฟอร์มจัดการ log แบบ Multi-tenant พร้อม dashboard, alert, และ RBAC สำหรับ Admin/Viewer สามารถ ingest log หลายรูปแบบ, normalize, จัดเก็บ, query และ monitor ผ่าน UI
+
+โครงสร้างโปรเจกต์
+/backend/     -> โค้ด server, API, authentication, ingest และ alert engine
+/frontend/    -> React frontend สำหรับ dashboard, logs, alerts, users
+/ingest/      -> ตัวช่วย ingest/log simulator: post_logs.py, send_syslog.sh
+/samples/     -> log ตัวอย่าง + scripts ส่ง log
+/docs/        -> documentation เช่น architecture, setup, deployment
+/docker-compose.yml  -> สำหรับรัน appliance mode
+/tests/       -> ตัวอย่าง unit/integration tests
+.env.example  -> environment variables template
+
+
+1. Backend
+
+โฟลเดอร์ /backend/ ประกอบด้วย:
+
+Express.js API สำหรับ:
+
+Authentication & Authorization (JWT + RBAC)
+
+Log ingestion (/ingest)
+
+Query logs (/logs, /admin/logs)
+
+Alerts (/alerts)
+
+User management (/admin/users)
+
+Database: MySQL/Postgres (schema สำหรับ logs, alerts, users)
+
+Modules:
+
+auth.js – login, token verify, requireRole
+
+alerts.js – engine ตรวจสอบกฎ alert (เช่น ล็อกอินล้มเหลวซ้ำๆ)
+
+retention.js – ลบ log ตาม policy
+
+ตัวอย่างการรัน
+
+cd backend
+npm install
+npm run dev
+
+
+2. Frontend
+
+โฟลเดอร์ /frontend/ ประกอบด้วย:
+
+React + Tailwind CSS
+
+Components หลัก:
+
+Dashboard.jsx – หน้า dashboard สรุป log/alert
+
+LogTable.jsx – ตารางแสดง log
+
+Alerts.jsx – ตารางแสดง alert พร้อม severity color
+
+Users.jsx – admin-only
+
+Routing & Auth
+
+ใช้ react-router-dom และ JWT token จาก backend
+
+ตัวอย่างการรัน
+
+cd frontend
+npm install
+npm run dev
+
+3. Ingest
+
+โฟลเดอร์ /ingest/ ประกอบด้วย:
+
+Scripts สำหรับส่ง log
+
+send_syslog.sh – ส่ง log ผ่าน Syslog UDP
+
+post_logs.py – ส่ง log JSON ผ่าน HTTP POST (/ingest)
+
+Use case
+
+ทดสอบ multi-tenant, severity, หรือ event_type
+
+ตัวอย่างการรัน
+# Syslog
+cd ingest
+./send_syslog.sh
+
+# HTTP POST
+python3 post_logs.py
+
+
+
+4. Deployment
+
+Appliance mode: ใช้ docker-compose.yml
+
+docker-compose up -d
+
+
+SaaS/Cloud mode: รัน backend + frontend บน VM/Container + HTTPS (self-signed สำหรับทดสอบ)
+
+Environment variables:
+
+JWT_SECRET, DB_HOST, DB_USER, DB_PASS, DB_NAME
+
+
+5. Testing
+
+/tests/ มี unit/integration tests อย่างน้อย 2-3 เคส
+
+ตัวอย่าง:
+
+ตรวจสอบ JWT auth
+
+ตรวจสอบ alert engine
+
+ตรวจสอบ log ingestion + normalization
+
+
+6. Samples
+
+/samples/log_example.log – log text sample
+
+/samples/send_syslog.sh – ส่ง log ผ่าน UDP
+
+/samples/post_logs.py – ส่ง log ผ่าน HTTP POST
+
+
+
+7. Features
+
+Multi-tenant: แยกข้อมูลตาม tenant
+
+RBAC: Admin / Viewer
+
+Alert: ตั้งกฎพื้นฐาน เช่น ล็อกอินล้มเหลวซ้ำ
+
+Dashboard: Top IP/User/EventType, Timeline, Filter
+
+Retention: ลบ log หลัง 7 วัน

@@ -1,0 +1,7 @@
+## อธิบาย
+
+- log_example.log – ตัวอย่าง log แบบ text สำหรับส่งผ่าน Syslog
+
+- send_syslog.sh – ใช้ nc ส่ง log ไป UDP port 514 ของ backend
+
+-  post_logs.py – ส่ง log แบบ JSON ผ่าน HTTP POST ไป /ingest ใช้ token สำหรับ auth

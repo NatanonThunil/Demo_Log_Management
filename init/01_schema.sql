@@ -1,0 +1,31 @@
+-- สร้างตารางหลัก
+
+CREATE TABLE IF NOT EXISTS users (
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(50) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  role VARCHAR(20) NOT NULL DEFAULT 'viewer',
+  tenant VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS logs (
+  id BIGSERIAL PRIMARY KEY,
+  ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  tenant VARCHAR(50) NOT NULL,
+  event_type VARCHAR(50),
+  src_ip VARCHAR(45),
+  dst_ip VARCHAR(45),
+  "user" VARCHAR(50),
+  severity INT DEFAULT 1,
+  msg VARCHAR(255),
+  raw JSONB
+);
+
+CREATE TABLE IF NOT EXISTS alerts (
+  id BIGSERIAL PRIMARY KEY,
+  tenant VARCHAR(50) NOT NULL,
+  message VARCHAR(255) NOT NULL,
+  severity INT DEFAULT 5,
+  timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  status VARCHAR(20) DEFAULT 'new'
+);
