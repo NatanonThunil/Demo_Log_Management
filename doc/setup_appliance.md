@@ -96,6 +96,10 @@ sh: 1: vite: not found
 
 วิธีแก้ไข:
 1. เพิ่ม vite เข้าไปในโปรเจกต์ของคุณ (บนเครื่องจริงก่อน)
+ก่อน อื่น ต้อง  
+
+cd .\appliance\frontend\
+หลังจากนั้น ก็ติดตั้ง vitejs
 npm install --save-dev @vitejs/plugin-react
 
 2. ลบ node_modules และ package-lock.json เก่าก่อน build ใหม่
@@ -112,8 +116,9 @@ docker build -t demo-log-frontend .
 4. Run container
 docker run -it -p 3000:3000 demo-log-frontend
 
+5 Run sever โดยใช้ code
 
-
+docker-compose up --build
 
 
 🧹 การหยุดใช้งาน
