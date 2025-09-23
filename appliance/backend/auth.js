@@ -50,10 +50,10 @@ async function handleFailedLogin(username, req, tenant = "default") {
     const failCount = rows[0].failCount;
 
     if (failCount >= 3) {
-      const lockedUntil = new Date(Date.now() + 60 * 1000); // lock 1 นาที
+      const lockedUntil = new Date(Date.now() + 60 * 1000); // lock 1 นาที // สามารถปรับเวลาได้
 
       await pool.query(
-        `INSERT INTO user_locks(username, locked_until)
+        `INSERT INTO user_locks(username, locked_until) 
          VALUES(?, ?)
          ON DUPLICATE KEY UPDATE locked_until=?`,
         [username, lockedUntil, lockedUntil]
@@ -132,7 +132,7 @@ export async function login(req, res) {
         "login_success",
         srcIp,
         username,
-        1,
+        1, 
         `User ${username} logged in successfully from IP ${srcIp}`,
         JSON.stringify({ action: "login_success", ip: srcIp }),
       ]
