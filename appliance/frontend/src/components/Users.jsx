@@ -1,8 +1,7 @@
-// src/components/Users.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-export default function Users({ token }) {
+export default function Users({ token, currentUser }) {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
@@ -17,6 +16,25 @@ export default function Users({ token }) {
       setUsers(res.data.rows || []);
     } catch (err) {
       console.error("Failed to fetch users:", err);
+    }
+  };
+
+  const handleRoleChange = async (username, newRole) => {
+    if (username === currentUser) {
+      alert("Cannot change your own role");
+      return;
+    }
+
+    try {
+      await axios.put(
+        `http://localhost:4000/admin/users/${username}/role`,
+        { role: newRole },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      fetchUsers();
+    } catch (err) {
+      console.error("Failed to update role:", err);
+      alert(err.response?.data?.error || "Failed to update role");
     }
   };
 
@@ -35,18 +53,29 @@ export default function Users({ token }) {
                 <th className="py-2 px-4 text-left">Username</th>
                 <th className="py-2 px-4 text-left">Role</th>
                 <th className="py-2 px-4 text-left">Tenant</th>
+                <th className="py-2 px-4 text-left">Action</th>
               </tr>
             </thead>
             <tbody>
               {users.map((user, i) => (
-                <tr
-                  key={i}
-                  className={i % 2 === 0 ? "bg-gray-50" : "bg-white"}
-                >
+                <tr key={i} className={i % 2 === 0 ? "bg-gray-50" : "bg-white"}>
                   <td className="py-2 px-4">{i + 1}</td>
                   <td className="py-2 px-4">{user.username}</td>
                   <td className="py-2 px-4">{user.role}</td>
                   <td className="py-2 px-4">{user.tenant}</td>
+                  <td className="py-2 px-4">
+                    {user.username !== currentUser && (
+                      <select
+                        value={user.role}
+                        onChange={(e) => handleRoleChange(user.username, e.target.value)}
+                        className="border border-gray-300 rounded px-2 py-1"
+                      >
+                        <option value="viewer">viewer</option>
+                        <option value="admin">admin</option>
+                      </select>
+                    )}
+                    {user.username === currentUser && <span className="text-gray-400">—</span>}
+                  </td>
                 </tr>
               ))}
             </tbody>

@@ -15,6 +15,8 @@
 ## 📦 ขั้นตอนการติดตั้ง
 
 ### 1. Clone Repository
+## อย่าลืมติดตั้ง Docker ก่อน
+
 ```bash
 git clone https://github.com/NatanonThunil/Demo_Log_Management.git
 cd Demo_Log_Management
