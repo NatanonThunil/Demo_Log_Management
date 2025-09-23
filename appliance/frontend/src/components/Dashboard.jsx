@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
-import LogTable from "./Logs"; // ใช้ Logs component ที่ fetch และแสดงตาราง
+import Logs from "./Logs";
 import Alerts from "./Alerts";
 import Users from "./Users";
 import axios from "axios";
@@ -14,6 +14,19 @@ export default function Dashboard({ token, role, logout }) {
     alerts: 0,
     users: 0,
   });
+  const [username, setUsername] = useState("");
+
+  // ดึง username จาก token
+  useEffect(() => {
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        setUsername(payload.username || "User");
+      } catch {
+        setUsername("User");
+      }
+    }
+  }, [token]);
 
   useEffect(() => {
     fetchSummary();
@@ -55,7 +68,8 @@ export default function Dashboard({ token, role, logout }) {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <Sidebar role={role} />
+      {/* ส่ง username เข้า Sidebar */}
+      <Sidebar role={role} username={username} />
       <div className="flex-1 flex flex-col">
         <Header logout={logout} />
 
@@ -89,8 +103,11 @@ export default function Dashboard({ token, role, logout }) {
           {/* Routes */}
           <div className="bg-white shadow rounded-lg p-4">
             <Routes>
-              <Route path="/" element={<div className="text-gray-700 text-lg">Welcome to the Dashboard!</div>} />
-              <Route path="/logs" element={<LogTable token={token} />} />
+              <Route
+                path="/"
+                element={<div className="text-gray-700 text-lg">Welcome to the Dashboard!</div>}
+              />
+              <Route path="/logs" element={<Logs token={token} />} />
               <Route path="/alerts" element={<Alerts token={token} />} />
               <Route
                 path="/users"
@@ -100,10 +117,10 @@ export default function Dashboard({ token, role, logout }) {
             </Routes>
           </div>
         </main>
+
         <footer className="bg-indigo-600 text-white p-4 text-center text-sm shadow-inner">
           © 2025 MyCompany. All rights reserved.
         </footer>
-
       </div>
     </div>
   );

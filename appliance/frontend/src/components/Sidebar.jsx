@@ -1,8 +1,9 @@
+// Sidebar.jsx
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { HiHome, HiClipboardList, HiBell, HiUsers } from "react-icons/hi";
 
-export default function Sidebar({ role }) {
+export default function Sidebar({ role, username }) {
   const [isExpanded, setIsExpanded] = useState(true); // layout state
 
   return (
@@ -14,13 +15,17 @@ export default function Sidebar({ role }) {
       {/* Avatar Section */}
       <div className="flex flex-col items-center mb-4 pb-4 border-b border-gray-300">
         <img
-          src="https://i.pravatar.cc/100"
+          src={`https://i.pravatar.cc/100?u=${username}`} // avatar unique ตาม username
           alt="Profile"
           className={`rounded-full mb-2 transition-all duration-300 ${
             isExpanded ? "w-20 h-20" : "w-10 h-10"
           }`}
         />
-        {isExpanded && <span className="text-gray-700 font-semibold">Ema Lee</span>}
+        {isExpanded && (
+          <span className="text-gray-700 font-semibold">
+            {username || "User"}
+          </span>
+        )}
       </div>
 
       {/* Layout toggle button */}

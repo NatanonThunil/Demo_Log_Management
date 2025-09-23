@@ -37,32 +37,30 @@ export default function Alerts({ token }) {
               </tr>
             </thead>
             <tbody>
-              {alerts.map((a) => (
+              {alerts.slice(0, 7).map((a) => (
                 <tr key={a.id} className="hover:bg-gray-50 transition duration-150">
                   <td className="px-4 py-2 border-b">{a.tenant}</td>
                   <td className="px-4 py-2 border-b">{a.message}</td>
                   <td className="px-4 py-2 border-b">
                     <span
-                      className={`px-2 py-1 rounded text-white text-sm ${
-                        a.severity >= 8
+                      className={`px-2 py-1 rounded text-white text-sm ${a.severity >= 8
                           ? "bg-red-600"
                           : a.severity >= 5
-                          ? "bg-yellow-500"
-                          : "bg-green-600"
-                      }`}
+                            ? "bg-yellow-500"
+                            : "bg-green-600"
+                        }`}
                     >
                       {a.severity ?? "-"}
                     </span>
                   </td>
                   <td className="px-4 py-2 border-b">
                     <span
-                      className={`px-2 py-1 rounded text-xs font-medium ${
-                        a.status === "new"
+                      className={`px-2 py-1 rounded text-xs font-medium ${a.status === "new"
                           ? "bg-blue-100 text-blue-800"
                           : a.status === "ack"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-green-100 text-green-800"
-                      }`}
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-green-100 text-green-800"
+                        }`}
                     >
                       {a.status || "-"}
                     </span>

@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 
+import bcrypt from "bcryptjs";
 import pool from "./db.js";
 import { login, verifyToken, requireRole } from "./auth.js";
 import { checkAlerts } from "./alerts.js";
@@ -22,30 +23,57 @@ app.use(bodyParser.json());
 // Login
 app.post("/login", login);
 
+// register
+app.post("/register", async (req, res) => {
+  const { username, password, tenant = "default" } = req.body;
+
+  try {
+    // ตรวจสอบ username ซ้ำ
+    const [rows] = await pool.query("SELECT * FROM users WHERE username=?", [username]);
+    if (rows.length > 0) {
+      return res.status(400).json({ error: "Username already exists" });
+    }
+
+    // hash password
+    const hashed = await bcrypt.hash(password, 10);
+
+    // สร้าง user ใหม่
+    await pool.query(
+      "INSERT INTO users(username, password, tenant, role) VALUES(?, ?, ?, ?)",
+      [username, hashed, tenant, "viewer"] // default role = viewer
+    );
+
+    res.json({ message: "User registered successfully" });
+  } catch (err) {
+    console.error("Register error:", err);
+    res.status(500).json({ error: "Registration failed" });
+  }
+});
+
 // Ingest logs (ทุกคนที่ล็อกอินได้)
 app.post("/ingest", verifyToken, async (req, res) => {
   const log = req.body;
-  const q =
-    "INSERT INTO logs(ts,tenant,event_type,src_ip,dst_ip,user,severity,msg,raw) VALUES(?,?,?,?,?,?,?,?,?)";
 
   try {
-    await pool.query(q, [
-      log.ts,
-      log.tenant,
-      log.event_type,
-      log.src_ip,
-      log.dst_ip,
-      log.user,
-      log.severity,
-      log.msg,
-      log.raw,
-    ]);
+    await pool.query(
+      "INSERT INTO logs(ts,tenant,event_type,src_ip,dst_ip,user,severity,msg,raw) VALUES(?,?,?,?,?,?,?,?,?)",
+      [
+        log.ts || new Date(),
+        log.tenant,
+        log.event_type,
+        log.src_ip,
+        log.dst_ip,
+        log.user,
+        log.severity,
+        log.msg,
+        JSON.stringify({ ...log, action: log.event_type })
+      ]
+    );
 
     await checkAlerts(log);
-
     res.json({ ok: true });
   } catch (err) {
-    console.error(err);
+    console.error("Ingest log error:", err);
     res.status(500).json({ error: "Failed to ingest log" });
   }
 });

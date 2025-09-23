@@ -1,10 +1,16 @@
-import pool from "./db.js"; // ถ้าใช้ db ก็ import ด้วย ES Module
+// retention.js
+import pool from "./db.js"; // ใช้ ES Module import
 
+/**
+ * Cleanup old logs
+ * ลบ logs ที่เก่ากว่า 7 วัน
+ */
 export async function cleanup() {
   try {
-    // ตัวอย่าง: ลบ logs เก่ากว่า 7 วัน
-    await pool.query("DELETE FROM logs WHERE ts < DATE_SUB(NOW(), INTERVAL 7 DAY)");
-    console.log("Old logs cleaned up");
+    const [result] = await pool.query(
+      "DELETE FROM logs WHERE ts < DATE_SUB(NOW(), INTERVAL 7 DAY)"
+    );
+    console.log(`Old logs cleaned up, affected rows: ${result.affectedRows}`);
   } catch (err) {
     console.error("Error during cleanup:", err);
   }
