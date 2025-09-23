@@ -88,6 +88,31 @@ server {
 
 sudo certbot --nginx -d siem-demo.yourcompany.com
 
+6 กรณีที่ Front End (Error)
+ตัวอย่าง
+> demo-log-frontend@1.0.0 dev 
+> vite --port 3000 sh: 1: vite: not found 
+sh: 1: vite: not found
+
+วิธีแก้ไข:
+1. เพิ่ม vite เข้าไปในโปรเจกต์ของคุณ (บนเครื่องจริงก่อน)
+npm install --save-dev @vitejs/plugin-react
+
+2. ลบ node_modules และ package-lock.json เก่าก่อน build ใหม่
+-- windows
+Remove-Item -Recurse -Force node_modules, package-lock.json
+-- Linux/mac
+rm -rf node_modules package-lock.json
+จากนั้น ก็ติดตั้ง  npm
+npm install
+
+3. Build image ใหม่
+docker build -t demo-log-frontend .
+
+4. Run container
+docker run -it -p 3000:3000 demo-log-frontend
+
+
 
 🌐 การเข้าถึงระบบ
 
