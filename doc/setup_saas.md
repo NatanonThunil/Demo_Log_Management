@@ -12,15 +12,14 @@
 - ติดตั้ง **Docker** และ **Docker Compose**
 - มี DNS ชี้มาที่ public IP ของ VM
 - แนะนำติดตั้ง **NGINX + Let's Encrypt** (รองรับ HTTPS)
+- ติดตั้ง ngrok ใส่ token ของคุณ (ครั้งเดียวพอ)
 
 ---
 
 ## 📦 ขั้นตอนการติดตั้ง
 
 ### 1. เตรียมเซิร์ฟเวอร์
-## อย่าลืมติดตั้ง Docker ก่อน
-```bash
-sudo apt update && sudo apt install -y docker.io docker-compose
+## อย่าลืมติดตั้ง Docker และ ติดตั้ง ngrok ก่อน
 
 
 2. Clone Repository
@@ -72,23 +71,45 @@ ADMINER_DEFAULT_SERVER=mysql
 docker-compose up -d
 
 
-5. ตั้งค่า Reverse Proxy + HTTPS
+5. แชร์ผ่าน ngrok
 
-ใช้ NGINX + Certbot ตัวอย่าง config:
-ตัวอย่าง 
+```bash
+แชร์ผ่าน ngrok
 
-server {
-    listen 80;
-    server_name siem-demo.yourcompany.com;
+ngrok http 3000 (ตาม host frontEnd)
 
-    location / {
-        proxy_pass http://localhost:3000;
-    }
-}
+จะได้ output แบบนี้:
+Forwarding    https://1234abcd.ngrok-free.app -> http://localhost:8080
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ถ้าอยากให้ ngrok รันใน container ด้วย → ใช้ไฟล์แบบนี้
+version: "3.8"
+services:
+  demo-app:
+    image: nginx:latest
+    container_name: demo-app
+    ports:
+      - "8080:80"
+
+  ngrok:
+    image: wernight/ngrok
+    container_name: ngrok
+    command: http demo-app:80
+    environment:
+      - NGROK_AUTH=<YOUR_AUTH_TOKEN> 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+จากนั้นรัน
+
+docker compose up -d
+
+จากนั้นรัน
+
+ngrok http 3000
+
+คุณจะเห็น public URL ของ ngrok เลย
 
 
-sudo certbot --nginx -d siem-demo.yourcompany.com
 
+************************************************************************************
 6 กรณีที่ Front End (Error)
 ตัวอย่าง
 > demo-log-frontend@1.0.0 dev 
@@ -113,12 +134,9 @@ docker build -t demo-log-frontend .
 4. Run container
 docker run -it -p 3000:3000 demo-log-frontend
 
+**********************************************************************************************************
 
 
 🌐 การเข้าถึงระบบ
 
-Frontend Dashboard: https://siem-demo.yourcompany.com
-
-Backend API: https://siem-demo.yourcompany.com/api
-
-Ingest API: https://siem-demo.yourcompany.com/ingest
+Frontend Dashboard: https://teagan-oosporic-singly.ngrok-free.dev
